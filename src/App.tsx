@@ -5,6 +5,7 @@ import {
   QrCode, ArrowUpRight, Github, ChevronLeft
 } from 'lucide-react';
 import { HeartGame } from './components/HeartGame';
+import { Analytics } from "@vercel/analytics/react";
 
 type Section = 'hub' | 'about' | 'linkedin' | 'leetcode' | 'support' | 'projects' | 'github';
 
@@ -1010,6 +1011,7 @@ export default function App() {
       {showGame && (
         <HeartGame onClose={() => setShowGame(false)} />
       )}
+      <Analytics />
     </div>
   );
 }
