@@ -95,18 +95,20 @@ const RainfallBackground = ({ mode = 'default' }: { mode?: 'default' | 'github' 
   );
 };
 
-const Typewriter = ({ text, speed = 150 }: { text: string, speed?: number }) => {
+const Typewriter = ({ text, speed = 150, continuous = true }: { text: string, speed?: number, continuous?: boolean }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
 
   useEffect(() => {
-    if (!isTyping) {
+    if (continuous && !isTyping) {
       const timeout = setTimeout(() => {
         setDisplayedText('');
         setIsTyping(true);
       }, 3000);
       return () => clearTimeout(timeout);
     }
+
+    if (!continuous && !isTyping) return;
 
     let i = 0;
     const interval = setInterval(() => {
@@ -118,12 +120,12 @@ const Typewriter = ({ text, speed = 150 }: { text: string, speed?: number }) => 
       }
     }, speed);
     return () => clearInterval(interval);
-  }, [text, speed, isTyping]);
+  }, [text, speed, isTyping, continuous]);
 
   return (
     <span className="font-mono">
       {displayedText}
-      <span className="animate-pulse">_</span>
+      {isTyping && <span className="animate-pulse">_</span>}
     </span>
   );
 };
@@ -345,9 +347,9 @@ const Spotlight = ({ onComplete }: { onComplete: () => void }) => {
       onAnimationComplete={onComplete}
     >
       <motion.div
-        className="absolute w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-full"
+        className="absolute w-[140px] h-[140px] md:w-[180px] md:h-[180px] rounded-full"
         style={{
-          boxShadow: 'inset 0 0 30px rgba(255,255,255,0.8), 0 0 50px 20px rgba(255,255,255,0.6), 0 0 0 9999px #000',
+          boxShadow: 'inset 0 0 40px rgba(255,255,255,0.8), 0 0 70px 30px rgba(255,255,255,0.6), 0 0 0 9999px #000',
           background: 'transparent',
         }}
         initial={{ x: sequence[0].x, y: sequence[0].y, scale: sequence[0].s }}
@@ -665,13 +667,22 @@ export default function App() {
           >
             <UKLogoHub onNavigate={setSection} />
             <div className="absolute bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 text-center w-full px-4 pointer-events-none">
-              <motion.p 
+              <motion.div 
                 animate={introStage === 'done' ? { opacity: [0.4, 1, 0.4], scale: [0.98, 1.02, 0.98] } : { opacity: 0 }}
                 transition={{ repeat: Infinity, duration: 2 }}
-                className="text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]"
+                className="flex items-center justify-center text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]"
               >
-                Drag to navigate
-              </motion.p>
+                Drag 
+                <span className="inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 border border-white rounded-full bg-black/80 backdrop-blur-md mx-3 relative align-middle">
+                  <span className="text-xs md:text-sm font-serif italic tracking-tighter text-white select-none inline-flex -translate-y-[1px]">
+                    <span>U</span>
+                    <span className="text-[#00FF66] drop-shadow-[0_0_2px_rgba(0,255,102,0.4)] translate-y-[0.3em] -ml-[1px]">K</span>
+                  </span>
+                  <span className="absolute inset-0 border-t border-[#00FF66]/40 rounded-full animate-[spin_20s_linear_infinite]" />
+                  <span className="absolute inset-[-2px] border-b border-white/20 rounded-full animate-[spin_30s_linear_infinite_reverse]" />
+                </span>
+                to navigate
+              </motion.div>
             </div>
           </motion.div>
         ) : (
@@ -831,22 +842,24 @@ export default function App() {
 
             {section === 'support' && (
               <div className="text-center w-full max-w-4xl mx-auto">
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  className="relative inline-block mb-10"
-                >
-                  <div className="relative p-2 bg-black border-2 border-[#F87171] rounded-3xl shadow-[0_0_30px_rgba(248,113,113,0.4)] overflow-hidden group max-w-[250px] mx-auto">
-                    <div className="absolute inset-0 bg-[#F87171]/10"></div>
-                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 3 }} />
-                    <img src="/qr.png" alt="UPI QR Code" className="w-full h-auto relative z-10 rounded-2xl" />
+                {/* NEW ANIMATION + TEXT */}
+                <div className="mb-12">
+                  <motion.div
+                    initial={{ opacity: 1 }}
+                    className="text-2xl md:text-4xl font-mono text-white mb-2 relative inline-block"
+                  >
+                    <span>Buy me a coffee 🥤</span>
+                    <motion.div
+                      className="absolute inset-0 bg-red-500 h-0.5 top-1/2"
+                      initial={{ width: 0 }}
+                      animate={{ width: '100%' }}
+                      transition={{ delay: 1, duration: 0.5 }}
+                    />
+                  </motion.div>
+                  <div className="text-2xl md:text-4xl font-mono text-white h-12">
+                    <Typewriter text="Help me save for my dream ride instead" speed={100} continuous={false} />
                   </div>
-                </motion.div>
-                <h2 className="text-4xl md:text-6xl font-light tracking-tight mb-4 text-white">Support</h2>
-                <p className="text-zinc-400 text-sm md:text-base mb-8 max-w-md mx-auto leading-relaxed">
-                  Every contribution brings me one step closer to my dream ride. <br/>
-                  <span className="text-white font-medium italic">Help me save for a Porsche Taycan!</span> 🏎️⚡
-                </p>
+                </div>
 
                 {/* 3D Model Embed */}
                 <div className="w-full h-64 md:h-96 rounded-2xl overflow-hidden border border-white/10 mt-8 mb-12 relative group bg-black">
@@ -864,6 +877,21 @@ export default function App() {
                     className="w-full h-full relative z-0"
                   ></iframe>
                 </div>
+
+                <h2 className="text-4xl md:text-6xl font-light tracking-tight mb-4 text-white">Support</h2>
+
+                {/* QR Code (MOVED) */}
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="relative inline-block mb-10"
+                >
+                  <div className="relative p-2 bg-black border-2 border-[#F87171] rounded-3xl shadow-[0_0_30px_rgba(248,113,113,0.4)] overflow-hidden group max-w-[250px] mx-auto">
+                    <div className="absolute inset-0 bg-[#F87171]/10"></div>
+                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 3 }} />
+                    <img src="/qr.png" alt="UPI QR Code" className="w-full h-auto relative z-10 rounded-2xl" />
+                  </div>
+                </motion.div>
 
                 <div className="flex flex-col items-center justify-center mt-12">
                   <motion.button 

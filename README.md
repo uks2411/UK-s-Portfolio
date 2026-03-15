@@ -1,20 +1,31 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+<img width="1200" height="475" alt="GHBanner" src="public/ukbanner.png" />
 </div>
 
-# Run and deploy your AI Studio app
 
-This contains everything you need to run your app locally.
+UK's Portfolio 
 
-View your app in AI Studio: https://ai.studio/apps/b01b4e87-0d88-4761-a357-5338a5ccdcad
+Welcome to my personal corner of the internet! This isn't just a portfolio; it’s a 12-hour sprint of ideation, rapid prototyping, and deployment, designed to push the boundaries of modern web interactions.
 
-## Run Locally
+Live Demo on Vercel ---> https://uk-s-portfolio.vercel.app/ 
 
-**Prerequisites:**  Node.js
+🛠 The Stack
+To achieve a balance of speed and "wow factor," I chose a modern, high-performance stack:
 
+Framework: React + Vite (For lightning-fast HMR)
+Styling: Tailwind CSS (Utility-first precision)
+Animations: Framer Motion (Silky smooth transitions)
+AI Partner: Gemini 3.1 Pro Preview (Code Architecture)
+Deployment: Vercel (Edge-optimized delivery)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+💡 The Challenge: "The Lag-Free Visual Feast"
+
+The biggest hurdle was the Performance vs. Aesthetics paradox.
+How do you pack a site with complex Framer Motion triggers without turning the user's browser into a space heater?
+The Solution: I implemented aggressive component lazy-loading and optimized animation triggers to ensure that while the visuals are "heavy," the browser's main thread stays light. The result? 60fps transitions even on modest hardware.
+
+🕹 Features
+
+Custom DNA: Every pixel and hex code was hand-picked to reflect my personal brand.
+Gemini-Augmented: Leveraging the latest AI models to refine logic and UI structure.
+The Secret Chamber: There is a hidden minigame tucked away somewhere in the code. Can you find the Easter egg? 🥚    [ P.S : its not that hard to find :) ]
