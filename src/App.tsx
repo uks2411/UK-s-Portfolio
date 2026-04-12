@@ -482,7 +482,7 @@ const AnimatedWords = () => {
   }, [direction, words.length]);
 
   return (
-    <div className="mt-16 flex justify-center items-center gap-8 md:gap-16">
+    <div className="mt-12 md:mt-16 flex justify-center items-center gap-4 sm:gap-8 md:gap-16 flex-wrap">
       {words.map((wordObj, index) => {
         const isActive = index === activeIndex;
         const activeColor = wordObj.color;
@@ -524,11 +524,19 @@ const AnimatedWords = () => {
   );
 };
 
+const CERTIFICATES = [
+  // To use your own images, replace the files in public/certificates/ and update the titles below
+  { id: 1, title: 'IIT-M DS & AI', url: '/certificates/iit.jpg' },
+  { id: 2, title: 'JPMC Job Sim', url: '/certificates/JPMC.jpg' },
+  { id: 3, title: 'TCS Job Sim', url: '/certificates/tcs.jpg' },
+];
+
 export default function App() {
   const [section, setSection] = useState<Section>('hub');
   const [introStage, setIntroStage] = useState<'loading' | 'waiting' | 'spotlight' | 'done'>('loading');
   const [secretClicks, setSecretClicks] = useState(0);
   const [showGame, setShowGame] = useState(false);
+  const [selectedCert, setSelectedCert] = useState<string | null>(null);
 
   useEffect(() => {
     if (introStage === 'loading') {
@@ -707,7 +715,7 @@ export default function App() {
               <div className="min-h-full w-full flex flex-col items-center justify-center p-6 pt-20 pb-12 md:p-12 md:py-24">
 
             {section === 'about' && (
-              <div className="max-w-3xl text-center">
+              <div className="w-full max-w-3xl text-center px-4 md:px-0 break-words">
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -722,7 +730,7 @@ export default function App() {
                   />
                   <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 3 }} />
                 </motion.div>
-                <div className="space-y-6 text-base md:text-lg text-zinc-400 leading-relaxed font-light max-w-2xl mx-auto">
+                <div className="space-y-4 md:space-y-6 text-sm md:text-lg text-zinc-400 leading-relaxed font-light max-w-2xl mx-auto px-4 md:px-0">
                   <p>
                     Hello! I’m <span className="text-white font-medium">S Uday Karthik</span>. I build things with <span className="text-[#D946EF] font-medium">AI</span>, obsess over <span className="text-[#D946EF] font-medium">Finance</span>, and spend my spare time thinking about <span className="text-[#D946EF] font-medium">Cars</span>. My toolkit is fueled by a love for <span className="text-[#D946EF] font-medium">CSE</span> and a desire to create tech that actually helps people (while making sure it looks cool).
                   </p>
@@ -732,6 +740,35 @@ export default function App() {
                 </div>
                 
                 <AnimatedWords />
+                
+                {/* Certificates Section */}
+                <div className="mt-16 w-full max-w-4xl mx-auto">
+                  <h3 className="text-xl md:text-2xl font-light text-white mb-8 tracking-tight">Certifications</h3>
+                  <div className="flex overflow-x-auto gap-6 pb-8 custom-scrollbar px-4 md:px-0">
+                    {CERTIFICATES.map((cert, index) => (
+                      <motion.div
+                        key={cert.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 + index * 0.1 }}
+                        className="flex-none w-52 md:w-56 aspect-[4/3] bg-black/40 border border-[#D946EF]/30 rounded-2xl overflow-hidden cursor-pointer group relative shadow-[0_0_15px_rgba(217,70,239,0.1)] hover:shadow-[0_0_25px_rgba(217,70,239,0.3)] hover:border-[#D946EF]/60 transition-all duration-300"
+                        onClick={() => setSelectedCert(cert.url)}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                        <img 
+                          src={cert.url} 
+                          alt={cert.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 z-20 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                          <p className="text-white font-medium text-sm md:text-base truncate">{cert.title}</p>
+                          <p className="text-[#D946EF] text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Click to view</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -781,7 +818,7 @@ export default function App() {
                     <div className="absolute inset-0 bg-[#FB923C]/5"></div>
                     <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 4 }} />
                     <span className="text-white font-medium text-lg relative z-10">
-                      <AnimatedNumber from={0} to={50} duration={2000} delay={1000} />+
+                      <AnimatedNumber from={0} to={60} duration={2000} delay={1000} />+
                     </span> <span className="text-zinc-500 text-sm ml-2 relative z-10">Solved</span>
                   </div>
                   <div className="px-8 py-4 rounded-2xl bg-black border border-white/10 backdrop-blur-sm relative overflow-hidden group">
@@ -791,7 +828,7 @@ export default function App() {
                     <span className="text-white font-medium text-lg relative z-10">
                       <AnimatedNumber 
                         from={5000000} 
-                        to={2251362} 
+                        to={2093946} 
                         duration={2500} 
                         delay={1000}
                         format={(v) => v.toLocaleString()} 
@@ -841,12 +878,12 @@ export default function App() {
             )}
 
             {section === 'support' && (
-              <div className="text-center w-full max-w-4xl mx-auto">
+              <div className="text-center w-full max-w-4xl mx-auto px-4 md:px-0">
                 {/* NEW ANIMATION + TEXT */}
                 <div className="mb-12">
                   <motion.div
                     initial={{ opacity: 1 }}
-                    className="text-2xl md:text-4xl font-mono text-white mb-2 relative inline-block"
+                    className="text-xl md:text-4xl font-mono text-white mb-2 relative inline-block"
                   >
                     <span>Buy me a coffee 🥤</span>
                     <motion.div
@@ -856,7 +893,7 @@ export default function App() {
                       transition={{ delay: 1, duration: 0.5 }}
                     />
                   </motion.div>
-                  <div className="text-2xl md:text-4xl font-mono text-white h-12">
+                  <div className="text-lg md:text-4xl font-mono text-white h-auto min-h-[3rem] md:h-12 leading-snug">
                     <Typewriter text="Help me save for my dream ride instead" speed={100} continuous={false} />
                   </div>
                 </div>
@@ -1039,6 +1076,40 @@ export default function App() {
       {showGame && (
         <HeartGame onClose={() => setShowGame(false)} />
       )}
+
+      <AnimatePresence>
+        {selectedCert && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8"
+            onClick={() => setSelectedCert(null)}
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative max-w-4xl w-full max-h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedCert(null)}
+                className="absolute -top-12 right-0 md:-right-12 md:top-0 p-2 text-white/50 hover:text-white transition-colors"
+              >
+                <X className="w-8 h-8" />
+              </button>
+              <img 
+                src={selectedCert} 
+                alt="Certificate Full View" 
+                className="max-w-full max-h-[75vh] object-contain rounded-lg border border-[#D946EF]/30 shadow-[0_0_50px_rgba(217,70,239,0.2)]"
+                referrerPolicy="no-referrer"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Analytics />
     </div>
   );
