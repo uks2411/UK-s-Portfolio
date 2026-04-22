@@ -5,6 +5,7 @@ import {
   QrCode, ArrowUpRight, Github, ChevronLeft
 } from 'lucide-react';
 import { HeartGame } from './components/HeartGame';
+import { PixelatedReveal } from './components/PixelatedReveal';
 import { Analytics } from "@vercel/analytics/react";
 
 type Section = 'hub' | 'about' | 'linkedin' | 'leetcode' | 'support' | 'projects' | 'github';
@@ -96,36 +97,42 @@ const RainfallBackground = ({ mode = 'default' }: { mode?: 'default' | 'github' 
 };
 
 const Typewriter = ({ text, speed = 150, continuous = true }: { text: string, speed?: number, continuous?: boolean }) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
+  const [key, setKey] = useState(0);
 
   useEffect(() => {
-    if (continuous && !isTyping) {
-      const timeout = setTimeout(() => {
-        setDisplayedText('');
-        setIsTyping(true);
-      }, 3000);
-      return () => clearTimeout(timeout);
+    if (continuous) {
+      const duration = (text.length * speed) + 3000;
+      const interval = setInterval(() => {
+        setKey(k => k + 1);
+      }, duration);
+      return () => clearInterval(interval);
     }
-
-    if (!continuous && !isTyping) return;
-
-    let i = 0;
-    const interval = setInterval(() => {
-      setDisplayedText(text.substring(0, i + 1));
-      i++;
-      if (i >= text.length) {
-        clearInterval(interval);
-        setIsTyping(false);
-      }
-    }, speed);
-    return () => clearInterval(interval);
-  }, [text, speed, isTyping, continuous]);
+  }, [text, speed, continuous]);
 
   return (
-    <span className="font-mono">
-      {displayedText}
-      {isTyping && <span className="animate-pulse">_</span>}
+    <span className="font-mono flex flex-wrap justify-center" key={key}>
+      {Array.from(text).map((char, index) => (
+        <motion.span
+          key={index}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: 0.05,
+            delay: index * (speed / 1000)
+          }}
+          className={char === ' ' ? 'w-[0.5em]' : char === '\n' ? 'w-full h-0' : ''}
+        >
+          {char === '\n' ? '' : char}
+        </motion.span>
+      ))}
+      <motion.span
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+        className="ml-1"
+      >
+        _
+      </motion.span>
     </span>
   );
 };
@@ -531,12 +538,65 @@ const CERTIFICATES = [
   { id: 3, title: 'TCS Job Sim', url: '/certificates/tcs.jpg' },
 ];
 
+const DelayedIframe = ({ delay, src, className, title, ...props }: any) => {
+  const [load, setLoad] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setLoad(true), delay);
+    return () => clearTimeout(timer);
+  }, [delay]);
+  
+  if (!load) {
+    return (
+      <div className={`flex flex-col items-center justify-center ${className} bg-black/60`}>
+        <div className="w-8 h-8 border-2 border-[#F87171]/40 border-t-[#F87171] rounded-full animate-spin mb-4"></div>
+        <span className="text-[#F87171]/70 font-mono text-xs animate-pulse tracking-widest text-center px-4">LOADING 3D ASSETS</span>
+      </div>
+    );
+  }
+  return <motion.iframe initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 1}} src={src} className={className} title={title} {...props} />;
+};
+
 export default function App() {
   const [section, setSection] = useState<Section>('hub');
   const [introStage, setIntroStage] = useState<'loading' | 'waiting' | 'spotlight' | 'done'>('loading');
   const [secretClicks, setSecretClicks] = useState(0);
   const [showGame, setShowGame] = useState(false);
   const [selectedCert, setSelectedCert] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+  const [leetcodeStats, setLeetcodeStats] = useState({
+    solved: 60, // Last known fallback
+    rank: 2093946, // Last known fallback
+    isLoaded: false
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchStats = async () => {
+      try {
+        const [profileRes, solvedRes] = await Promise.all([
+          fetch('https://alfa-leetcode-api.onrender.com/UKcodes'),
+          fetch('https://alfa-leetcode-api.onrender.com/UKcodes/solved')
+        ]);
+        if (!isMounted) return;
+        const profileData = await profileRes.json();
+        const solvedData = await solvedRes.json();
+        
+        // Ensure successful parse
+        if (solvedData.solvedProblem && profileData.ranking) {
+          setLeetcodeStats({
+            solved: solvedData.solvedProblem,
+            rank: profileData.ranking,
+            isLoaded: true
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch LeetCode data:', err);
+      }
+    };
+    fetchStats();
+    return () => { isMounted = false; };
+  }, []);
 
   useEffect(() => {
     if (introStage === 'loading') {
@@ -547,7 +607,18 @@ export default function App() {
     }
   }, [introStage]);
 
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const getSectionColor = (sec: Section) => {
+    switch (sec) {
+      case 'about': return { hex: '#D946EF', hoverBg: 'hover:bg-[#D946EF]', hoverBorder: 'hover:border-[#D946EF]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(217,70,239,0.4)]' };
+      case 'linkedin': return { hex: '#38BDF8', hoverBg: 'hover:bg-[#38BDF8]', hoverBorder: 'hover:border-[#38BDF8]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]' };
+      case 'leetcode': return { hex: '#FB923C', hoverBg: 'hover:bg-[#FB923C]', hoverBorder: 'hover:border-[#FB923C]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(251,146,60,0.4)]' };
+      case 'support': return { hex: '#F87171', hoverBg: 'hover:bg-[#F87171]', hoverBorder: 'hover:border-[#F87171]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(248,113,113,0.4)]' };
+      case 'projects': return { hex: '#FDE047', hoverBg: 'hover:bg-[#FDE047]', hoverBorder: 'hover:border-[#FDE047]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(253,224,71,0.4)]' };
+      case 'github': return { hex: '#00FF66', hoverBg: 'hover:bg-[#00FF66]', hoverBorder: 'hover:border-[#00FF66]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(0,255,102,0.4)]' };
+      default: return { hex: '#00FF66', hoverBg: 'hover:bg-[#00FF66]', hoverBorder: 'hover:border-[#00FF66]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(0,255,102,0.4)]' };
+    }
+  };
+  const sectionColor = getSectionColor(section);
 
   const handleHeartClick = () => {
     setSecretClicks(prev => {
@@ -563,19 +634,6 @@ export default function App() {
   const handleIntroComplete = () => {
     setIntroStage('done');
   };
-
-  const getSectionColor = (sec: Section) => {
-    switch (sec) {
-      case 'about': return { hex: '#D946EF', hoverBg: 'hover:bg-[#D946EF]', hoverBorder: 'hover:border-[#D946EF]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(217,70,239,0.4)]' };
-      case 'linkedin': return { hex: '#38BDF8', hoverBg: 'hover:bg-[#38BDF8]', hoverBorder: 'hover:border-[#38BDF8]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(56,189,248,0.4)]' };
-      case 'leetcode': return { hex: '#FB923C', hoverBg: 'hover:bg-[#FB923C]', hoverBorder: 'hover:border-[#FB923C]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(251,146,60,0.4)]' };
-      case 'support': return { hex: '#F87171', hoverBg: 'hover:bg-[#F87171]', hoverBorder: 'hover:border-[#F87171]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(248,113,113,0.4)]' };
-      case 'projects': return { hex: '#FDE047', hoverBg: 'hover:bg-[#FDE047]', hoverBorder: 'hover:border-[#FDE047]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(253,224,71,0.4)]' };
-      case 'github': return { hex: '#00FF66', hoverBg: 'hover:bg-[#00FF66]', hoverBorder: 'hover:border-[#00FF66]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(0,255,102,0.4)]' };
-      default: return { hex: '#00FF66', hoverBg: 'hover:bg-[#00FF66]', hoverBorder: 'hover:border-[#00FF66]', hoverShadow: 'hover:shadow-[0_0_15px_rgba(0,255,102,0.4)]' };
-    }
-  };
-  const sectionColor = getSectionColor(section);
 
   return (
     <div className="fixed inset-0 bg-[#0a0a0c] text-white overflow-hidden font-sans selection:bg-[#00FF66] selection:text-black">
@@ -817,20 +875,22 @@ export default function App() {
                   <div className="px-8 py-4 rounded-2xl bg-black border border-white/10 backdrop-blur-sm relative overflow-hidden group">
                     <div className="absolute inset-0 bg-[#FB923C]/5"></div>
                     <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 4 }} />
-                    <span className="text-white font-medium text-lg relative z-10">
-                      <AnimatedNumber from={0} to={60} duration={2000} delay={1000} />+
+                    <span className="text-white font-medium text-lg relative z-10 w-24 text-left inline-block">
+                      <AnimatedNumber key={leetcodeStats.solved} from={0} to={leetcodeStats.solved} duration={2000} delay={500} />
+                      +
                     </span> <span className="text-zinc-500 text-sm ml-2 relative z-10">Solved</span>
                   </div>
-                  <div className="px-8 py-4 rounded-2xl bg-black border border-white/10 backdrop-blur-sm relative overflow-hidden group">
+                  <div className="px-8 py-4 rounded-2xl bg-black border border-white/10 backdrop-blur-sm relative overflow-hidden group min-w-[200px]">
                     <div className="absolute inset-0 bg-[#FB923C]/5"></div>
                     <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 4, delay: 0.5 }} />
                     <span className="text-zinc-500 text-sm mr-2 relative z-10">Rank</span>
-                    <span className="text-white font-medium text-lg relative z-10">
+                    <span className="text-white font-medium text-lg relative z-10 w-28 text-right inline-block">
                       <AnimatedNumber 
+                        key={leetcodeStats.rank}
                         from={5000000} 
-                        to={2093946} 
-                        duration={2500} 
-                        delay={1000}
+                        to={leetcodeStats.rank} 
+                        duration={2000} 
+                        delay={500}
                         format={(v) => v.toLocaleString()} 
                       />
                     </span>
@@ -893,8 +953,8 @@ export default function App() {
                       transition={{ delay: 1, duration: 0.5 }}
                     />
                   </motion.div>
-                  <div className="text-lg md:text-4xl font-mono text-white h-auto min-h-[3rem] md:h-12 leading-snug">
-                    <Typewriter text="Help me save for my dream ride instead" speed={100} continuous={false} />
+                  <div className="text-lg md:text-3xl font-mono text-white h-auto min-h-[4rem] leading-snug">
+                    <Typewriter text={'Help me save for my dream\nride instead'} speed={100} continuous={false} />
                   </div>
                 </div>
 
@@ -903,7 +963,8 @@ export default function App() {
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
                     <span className="text-white font-mono text-sm tracking-widest bg-black/80 px-4 py-2 rounded-full border border-white/20">DRAG TO ROTATE</span>
                   </div>
-                  <iframe 
+                  <DelayedIframe 
+                    delay={3500}
                     title="2025 Porsche Taycan Turbo GT Weissach Package" 
                     frameBorder="0" 
                     allowFullScreen 
@@ -912,7 +973,7 @@ export default function App() {
                     allow="autoplay; fullscreen; xr-spatial-tracking" 
                     src="https://sketchfab.com/models/4e1abafe7cf5413587a421377624ba08/embed?autostart=1&ui_theme=dark&dnt=1" 
                     className="w-full h-full relative z-0"
-                  ></iframe>
+                  />
                 </div>
 
                 <h2 className="text-4xl md:text-6xl font-light tracking-tight mb-4 text-white">Support</h2>
@@ -923,10 +984,14 @@ export default function App() {
                   animate={{ y: 0, opacity: 1 }}
                   className="relative inline-block mb-10"
                 >
-                  <div className="relative p-2 bg-black border-2 border-[#F87171] rounded-3xl shadow-[0_0_30px_rgba(248,113,113,0.4)] overflow-hidden group max-w-[250px] mx-auto">
-                    <div className="absolute inset-0 bg-[#F87171]/10"></div>
-                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 3 }} />
-                    <img src="/qr.png" alt="UPI QR Code" className="w-full h-auto relative z-10 rounded-2xl" />
+                  <div className="relative p-2 bg-black border-2 border-[#F87171] rounded-3xl shadow-[0_0_30px_rgba(248,113,113,0.4)] group max-w-[250px] mx-auto">
+                    <div className="absolute inset-0 bg-[#F87171]/10 rounded-3xl"></div>
+                    <PixelatedReveal>
+                      <div className="relative overflow-hidden rounded-2xl">
+                        <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 z-0 pointer-events-none" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 3 }} />
+                        <img src="/qr.png" alt="UPI QR Code" className="w-full h-auto relative z-10 rounded-2xl" />
+                      </div>
+                    </PixelatedReveal>
                   </div>
                 </motion.div>
 
