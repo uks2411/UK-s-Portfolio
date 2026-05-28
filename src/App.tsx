@@ -421,7 +421,7 @@ const BouncingBlueEmojis = () => {
   );
 };
 
-const AnimatedNumber = ({ from, to, duration = 2000, delay = 0, format = (v: number) => v.toString() }: { from: number, to: number, duration?: number, delay?: number, format?: (v: number) => string }) => {
+const AnimatedNumber = ({ from, to, duration = 2000, delay = 0, format = (v: number) => v.toString() }: { from: number, to: number, duration?: number, delay?: number, format?: (v: number) => string, key?: React.Key }) => {
   const [value, setValue] = useState(from);
 
   useEffect(() => {
@@ -1025,9 +1025,9 @@ export default function App() {
                     >
                       <div className="flex items-end justify-between mb-10 border-b border-white/10 pb-6">
                         <h2 className="text-3xl md:text-5xl font-light tracking-tight text-white">Selected Work</h2>
-                        <div className="text-[#FDE047] font-mono text-xs">01 — 02</div>
+                        <div className="text-[#FDE047] font-mono text-xs">01 — 03</div>
                       </div>
-                      <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         {/* Project 1: This Page */}
                         <motion.div 
                           whileHover={{ y: -5 }}
@@ -1035,7 +1035,7 @@ export default function App() {
                           className="group cursor-pointer relative aspect-[16/10] rounded-2xl overflow-hidden border border-white/10 bg-black transition-all duration-500 hover:border-[#FDE047]/50 hover:shadow-[0_0_30px_rgba(253,224,71,0.1)]"
                         >
                           <div className="w-full h-full flex items-center justify-center bg-zinc-900/50 group-hover:bg-zinc-900/80 transition-colors duration-500">
-                            <div className="relative flex items-center justify-center w-24 h-24 md:w-32 md:h-32 border-2 border-white rounded-full bg-black/80 backdrop-blur-2xl shadow-[0_0_20px_rgba(255,255,255,0.15)] group-hover:shadow-[0_0_40px_rgba(0,255,102,0.25)] transition-shadow duration-500">
+                            <div className="relative flex items-center justify-center w-24 h-24 md:w-32 md:h-32 border-2 border-white rounded-full bg-black/80 backdrop-blur-2xl shadow-[0_0_20px_rgba(255,255,255,0.15)] group-hover:shadow-[0_0_40px_rgba(0,255,102,0.25)] opacity-100 transition-all duration-500">
                               <span className="text-4xl md:text-6xl font-serif italic tracking-tighter text-white select-none inline-flex -translate-y-1 md:-translate-y-2">
                                 <span>U</span>
                                 <span className="text-[#00FF66] drop-shadow-[0_0_8px_rgba(0,255,102,0.4)] translate-y-[0.45em] -ml-1 md:-ml-2">K</span>
@@ -1051,7 +1051,30 @@ export default function App() {
                           </div>
                         </motion.div>
 
-                        {/* Project 2: Coming Soon */}
+                        {/* Project 2: FinSight AI Analyst */}
+                        <motion.div 
+                          whileHover={{ y: -5 }}
+                          onClick={() => setSelectedProject('finsight')}
+                          className="group cursor-pointer relative aspect-[16/10] rounded-2xl overflow-hidden border border-white/10 bg-black transition-all duration-500 hover:border-[#FB923C]/50 hover:shadow-[0_0_30px_rgba(251,146,60,0.15)]"
+                        >
+                          <div className="w-full h-full flex items-center justify-center bg-zinc-900/50 group-hover:bg-zinc-900/80 transition-colors duration-500">
+                            <img 
+                              src="/projects/finsight.png" 
+                              alt="FinSight AI Analyst placeholder" 
+                              className="w-[85%] h-[85%] object-contain opacity-100 group-hover:scale-105 transition-all duration-500"
+                              referrerPolicy="no-referrer"
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+                          <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 z-0" animate={{ x: ['-200%', '200%'] }} transition={{ repeat: Infinity, duration: 2.5, ease: "linear", repeatDelay: 4, delay: 0.2 }} />
+                          <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 relative z-10">
+                            <div className="text-[#FB923C] text-[10px] font-mono tracking-widest uppercase mb-3">Python • Gemini API • Recharts</div>
+                            <h3 className="text-xl md:text-2xl font-medium mb-1 text-white">FinSight AI Analyst</h3>
+                            <p className="text-zinc-400 text-xs md:text-sm line-clamp-2 font-light">Intelligent fundamental analytics tool parsing historical trends with LLM forecasting.</p>
+                          </div>
+                        </motion.div>
+
+                        {/* Project 3: Coming Soon */}
                         <motion.div 
                           whileHover={{ y: -5 }}
                           className="group relative aspect-[16/10] rounded-2xl overflow-hidden border border-white/10 bg-black transition-all duration-500 hover:border-[#FDE047]/50 hover:shadow-[0_0_30px_rgba(253,224,71,0.1)]"
@@ -1093,39 +1116,105 @@ export default function App() {
                       </button>
 
                       <div className="relative z-10 grid md:grid-cols-[1fr_2fr] gap-10 items-start">
-                        <div className="flex flex-col items-center md:items-start">
-                          <div className="relative flex items-center justify-center w-32 h-32 md:w-48 md:h-48 border-2 border-white rounded-full bg-black/80 backdrop-blur-2xl shadow-[0_0_30px_rgba(255,255,255,0.15)] mb-8">
-                            <span className="text-5xl md:text-7xl font-serif italic tracking-tighter text-white select-none inline-flex -translate-y-2 md:-translate-y-3">
-                              <span>U</span>
-                              <span className="text-[#00FF66] drop-shadow-[0_0_8px_rgba(0,255,102,0.4)] translate-y-[0.45em] -ml-2 md:-ml-3">K</span>
-                            </span>
-                          </div>
-                          <h3 className="text-lg font-medium text-white mb-4 border-b border-white/10 w-full pb-2">Technologies</h3>
-                          <div className="flex flex-wrap gap-2">
-                            {['React 18', 'Tailwind CSS', 'Framer Motion', 'Gemini 3.1 Pro', 'Vite', 'Lucide Icons'].map(tech => (
-                              <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-zinc-300 font-mono">
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
+                        {selectedProject === 'this-page' ? (
+                          <>
+                            <div className="flex flex-col items-center md:items-start">
+                              <div className="relative flex items-center justify-center w-32 h-32 md:w-48 md:h-48 border-2 border-white rounded-full bg-black/80 backdrop-blur-2xl shadow-[0_0_30px_rgba(255,255,255,0.15)] opacity-100 mb-8 animate-fade-in">
+                                <span className="text-5xl md:text-7xl font-serif italic tracking-tighter text-white select-none inline-flex -translate-y-2 md:-translate-y-3">
+                                  <span>U</span>
+                                  <span className="text-[#00FF66] drop-shadow-[0_0_8px_rgba(0,255,102,0.4)] translate-y-[0.45em] -ml-2 md:-ml-3">K</span>
+                                </span>
+                              </div>
+                              <h3 className="text-lg font-medium text-white mb-4 border-b border-white/10 w-full pb-2">Technologies</h3>
+                              <div className="flex flex-wrap gap-2">
+                                {['React 18', 'Tailwind CSS', 'Framer Motion', 'Gemini 3.1 Pro', 'Vite', 'Lucide Icons'].map(tech => (
+                                  <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-zinc-300 font-mono">
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
 
-                        <div>
-                          <h2 className="text-3xl md:text-5xl font-light tracking-tight text-white mb-2">This Page</h2>
-                          <div className="text-[#FDE047] font-mono text-sm tracking-widest uppercase mb-8">Interactive Portfolio</div>
-                          
-                          <div className="space-y-6 text-zinc-300 font-light leading-relaxed text-base md:text-lg">
-                            <p>
-                              Developing this interactive portfolio was a comprehensive 12+ hour journey from conceptualization to deployment. 
-                            </p>
-                            <p>
-                              While leveraging advanced AI tools like <span className="text-[#00FF66] font-medium">Gemini 3.1 Pro</span> accelerated the process, it required continuous iteration, debugging, and refined prompting to achieve this exact cyberpunk aesthetic and fluid user experience. Every animation, glow effect, and interaction was meticulously tuned.
-                            </p>
-                            <p className="p-6 bg-white/5 border-l-2 border-[#FDE047] rounded-r-xl italic text-zinc-400">
-                              "This project reinforced a paradigm shift in modern web development: we are transitioning from purely writing boilerplate code to focusing on high-level system design, creative direction, and orchestrating AI to bring our visions to life."
-                            </p>
-                          </div>
-                        </div>
+                            <div>
+                              <h2 className="text-3xl md:text-5xl font-light tracking-tight text-white mb-2">This Page</h2>
+                              <div className="text-[#FDE047] font-mono text-sm tracking-widest uppercase mb-8">Interactive Portfolio</div>
+                              
+                              <div className="space-y-6 text-zinc-300 font-light leading-relaxed text-base md:text-lg">
+                                <p>
+                                  Developing this interactive portfolio was a comprehensive 12+ hour journey from conceptualization to deployment. 
+                                </p>
+                                <p>
+                                  While leveraging advanced AI tools like <span className="text-[#00FF66] font-medium">Gemini 3.1 Pro</span> accelerated the process, it required continuous iteration, debugging, and refined prompting to achieve this exact cyberpunk aesthetic and fluid user experience. Every animation, glow effect, and interaction was meticulously tuned.
+                                </p>
+                                <p className="p-6 bg-white/5 border-l-2 border-[#FDE047] rounded-r-xl italic text-zinc-400">
+                                  "This project reinforced a paradigm shift in modern web development: we are transitioning from purely writing boilerplate code to focusing on high-level system design, creative direction, and orchestrating AI to bring our visions to life."
+                                </p>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex flex-col items-center md:items-start w-full">
+                              <div className="relative flex items-center justify-center w-32 h-32 md:w-48 md:h-48 border border-[#FB923C]/30 rounded-2xl bg-black/80 backdrop-blur-2xl shadow-[0_0_30px_rgba(251,146,60,0.15)] mb-8 p-3 overflow-hidden">
+                                <img 
+                                  src="/projects/finsight.png" 
+                                  alt="FinSight AI Analyst logo" 
+                                  className="w-full h-full object-contain opacity-100"
+                                  referrerPolicy="no-referrer"
+                                />
+                              </div>
+                              <h3 className="text-lg font-medium text-white mb-4 border-b border-white/10 w-full pb-2">Technologies</h3>
+                              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                                {['Python', 'Gemini API', 'Pandas', 'NumPy', 'Recharts / D3', 'Fundamental Analysis', 'Sandboxed Engine'].map(tech => (
+                                  <span key={tech} className="px-3 py-1 bg-[#FB923C]/5 border border-[#FB923C]/20 rounded-full text-xs text-zinc-300 font-mono">
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div>
+                              <h2 className="text-3xl md:text-5xl font-light tracking-tight text-white mb-2">FinSight AI Analyst</h2>
+                              <div className="text-[#FB923C] font-mono text-sm tracking-widest uppercase mb-8">Predictive Fundamental Analytics</div>
+                              
+                              <div className="space-y-6 text-zinc-300 font-light leading-relaxed text-base">
+                                <p className="text-white/90 font-medium">
+                                  FinSight AI Analyst is an intelligent financial tool that parses raw stock fundamentals, visualizes historical trends, and leverages the Gemini API to forecast future performance.
+                                </p>
+
+                                <div className="space-y-4 mt-6">
+                                  <h4 className="text-[#FB923C] font-mono text-xs tracking-wider uppercase border-b border-white/5 pb-2">Key Technical Features</h4>
+                                  
+                                  <div className="grid gap-4">
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#FB923C]/40 transition-colors">
+                                      <h5 className="font-semibold text-white mb-1 text-sm md:text-base">01. Data Ingestion</h5>
+                                      <p className="text-zinc-400 text-xs md:text-sm font-light">Supports manual copy-paste or bulk text-file uploads of raw yearly financials (Sales, Expenses, Net Profit, EPS) parsed directly from Screener.in.</p>
+                                    </div>
+
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#FB923C]/40 transition-colors">
+                                      <h5 className="font-semibold text-white mb-1 text-sm md:text-base">02. Predictive Validation</h5>
+                                      <p className="text-zinc-400 text-xs md:text-sm font-light">Trains on historical data up to the penultimate year to forecast the latest year's metrics. Features strict code-level sandboxing to isolate the test year and prevent data leakage, ensuring honest accuracy benchmarking.</p>
+                                    </div>
+
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#FB923C]/40 transition-colors">
+                                      <h5 className="font-semibold text-white mb-1 text-sm md:text-base">03. Sector-Aware Inferences</h5>
+                                      <p className="text-zinc-400 text-xs md:text-sm font-light">Retains contextual insights within specific industries, allowing the model to use transferred learnings from previously trained peer stocks (e.g., Sun Pharma) to improve predictions for another (e.g., Dr. Reddy's).</p>
+                                    </div>
+
+                                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#FB923C]/40 transition-colors">
+                                      <h5 className="font-semibold text-white mb-1 text-sm md:text-base">04. Meta-Patterns Engine</h5>
+                                      <p className="text-zinc-400 text-xs md:text-sm font-light">Continuously identifies macro-trends across divergent sectors and dynamically applies these global insights back to the entire training database to optimize overall statistical accuracy.</p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <p className="p-5 bg-black/40 border-l-2 border-[#FB923C] rounded-r-xl italic text-zinc-400 text-sm mt-6">
+                                  Built as a research project bridging core fundamental analysis with LLM-driven predictive analytics. Next phase involves developing a companion tool for Technical Analysis.
+                                </p>
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </motion.div>
                   )}
